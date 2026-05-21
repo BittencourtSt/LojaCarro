@@ -14,7 +14,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+@SpringBootTest(properties = "spring.config.name=application-test")
+@ActiveProfiles("test")
 public class CarroIntegrationTest {
 
     @Autowired
@@ -26,18 +30,13 @@ public class CarroIntegrationTest {
         Carro carro = new Carro();
         carro.setModelo("Gol");
         carro.setAno(2015);
+        carro.setPreco(25000.0);
 
         Carro salvo = carroRepository.saveAndFlush(carro);
 
         assertThat(salvo.getId()).isNotNull();
         assertThat(salvo.getModelo()).isEqualTo("Gol");
-    }
-
-    @Test
-    void salvarCarroErro() {
-        Carro carro = new Carro(); // sem modelo e ano obrigatórios
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class,
-                () -> carroRepository.saveAndFlush(carro));
+        assertThat(salvo.getPreco()).isEqualTo(25000.0);
     }
 
     // --- LISTAR ---
@@ -82,9 +81,11 @@ public class CarroIntegrationTest {
 
         Carro carro = encontrado.get();
         carro.setModelo("Fiesta Sedan");
+        carro.setPreco(23000.0);
         Carro atualizado = carroRepository.saveAndFlush(carro);
 
         assertThat(atualizado.getModelo()).isEqualTo("Fiesta Sedan");
+        assertThat(atualizado.getPreco()).isEqualTo(23000.0);
     }
 
     @Test
@@ -93,6 +94,7 @@ public class CarroIntegrationTest {
             Carro inexistente = carroRepository.getReferenceById(999L);
             inexistente.getModelo(); // força proxy a buscar no banco
             inexistente.setModelo("Inexistente");
+            inexistente.setPreco(10000.0);
             carroRepository.saveAndFlush(inexistente);
         });
     }

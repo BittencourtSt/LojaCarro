@@ -2,6 +2,7 @@ package br.org.edu.ifrn.LojaCarro.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 public class Carro {
@@ -16,7 +17,12 @@ public class Carro {
 
     @NotNull
     @Column(nullable = false)
-    private Integer ano; // Integer para permitir null e validar corretamente
+    private Integer ano;
+
+    @NotNull
+    @Positive(message = "O preço deve ser positivo")
+    @Column(nullable = false)
+    private Double preco;
 
     public Long getId() {
         return id;
@@ -40,5 +46,13 @@ public class Carro {
 
     public void setAno(Integer ano) {
         this.ano = ano;
+    }
+
+    public Double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(Double preco) {
+        this.preco = preco;
     }
 }
